@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import HostTable2 from './components/HostTable2'
+import HostTable2 from './components/HostTable2/HostTable2'
 
 export default {
   name: 'app',

@@ -1,13 +1,17 @@
 var express = require('express')
 var app = express()
 var ping = require('ping')
+var moment = require('moment')
 let hostList = []
 let oldHostList = []
 let count =  0
 let info = {}
-
+let bodyPaser = require('body-parser')
+let host2 = ['192.168.0.1','192.168.0.2','google.com','yahoo.com.tw']
 const cors = require('cors')
 
+app.use(bodyPaser.urlencoded({extended:true}))
+app.use(bodyPaser.json())
 app.use(cors())
 app.options('*',cors())
 
@@ -17,13 +21,14 @@ app.listen(3000, function () {
 })
 
 function getHostStatus(){
-  var host2 = ['192.168.0.1','192.168.0.2','google.com','yahoo.com.tw']
-  var frequency = 1000 //1 second
+
+  var frequency = 5000 
       setInterval(function() {
         host2.forEach(function(host){
           ping.sys.probe(host, function(active){
             info.hostName = host
             info.active =  active ? 'Active' :  ' Non-Active'
+            info.date = moment().format('YYYY/MM/DD  HH:mm:ss')
             hostList.push(info)
             info ={}
           })
@@ -33,6 +38,10 @@ function getHostStatus(){
         hostList = []
       }, frequency)
 }
+app.post('/addHost',function(req,res){
+  host2.push(req.body.newHost)
+  res.send('Host was added success')
+})
 
 app.get('/todo', function (req, res) {
   let page = req.query.page
