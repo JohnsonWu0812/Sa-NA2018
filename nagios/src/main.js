@@ -7,9 +7,15 @@ import '/Users/wu/Desktop/Se-Na2018/nagios/node_modules/bootstrap/dist/js/bootst
 import 'bootstrap/dist/css/bootstrap.css'
 import HostTable2 from './components/HostTable2/HostTable2'
 import TopButton from './components/TopButton'
+import Vuetable from '../node_modules/vuetable-2/src/components/Vuetable'
+import VueTablePagination from '../node_modules/vuetable-2/src/components/VueTablePagination'
+
+
 
 Vue.config.productionTip = false
 Vue.use(HostTable2)
+Vue.component('vuetable', Vuetable)
+Vue.component('vuetable-pagination', VueTablePagination)
 /* eslint-disable no-new */
 
 new Vue({
@@ -17,4 +23,9 @@ new Vue({
   router,
   components: { App },
   template: '<App/>',
-})
+  comments: {
+    VueTable: Vuetable,
+    VueTablePagination: VueTablePagination
+    }
+  }
+)

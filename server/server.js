@@ -20,9 +20,14 @@ app.listen(3000, function () {
   console.log('Example app listening on port 3000!');
 })
 
+
+function pingHost(){
+  
+}
+
 function getHostStatus(){
 
-  var frequency = 5000 
+  var frequency = 7000 
       setInterval(function() {
         host2.forEach(function(host){
           ping.sys.probe(host, function(active){
@@ -39,8 +44,24 @@ function getHostStatus(){
       }, frequency)
 }
 app.post('/addHost',function(req,res){
-  host2.push(req.body.newHost)
-  res.send('Host was added success')
+  console.log('req.body  :' +JSON.stringify(req.body.newHost))
+  if(req.body.newHost === undefined)
+  res.send('just space')
+  else if(host2.indexOf(req.body.newHost) > 0 )
+   res.send('There has same host')
+  else{
+    host2.push(req.body.newHost)
+    ping.sys.probe(req.body.newHost,function(active){
+      hostList.push({
+        'hostName' : req.body.newHost,
+        'active' :   active ? 'Active' :  ' Non-Active',
+        'date' : moment().format('YYYY/MM/DD  HH:mm:ss')
+      })
+    })
+    if(oldHostList !== hostList)
+    oldHostList = hostList
+    res.send('Host: "'+ req.body.newHost+ '" was added success')
+  }
 })
 
 app.get('/todo', function (req, res) {
