@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <div class="ui container">
-      <host-table2></host-table2>
+      <router-view></router-view>
     </div>
   </div>
 </template>
