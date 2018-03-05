@@ -9,7 +9,7 @@ function readData(callback){
   let hostList= []
   fs.readFile("./hostList.txt", "utf8", function(err, data){
     hostList.push(data)
-    console.log(data)
+    callback(data) 
   })
   console.log(hostList)
 }
