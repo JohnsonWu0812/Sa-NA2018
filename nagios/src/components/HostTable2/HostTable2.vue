@@ -1,23 +1,30 @@
 <template>
     <div class="row">
-      <form @submit.prevent="addHost()" method="post">
+      <div class="col-sm-12">
         <div class = "row">
-        <div class = "col-md-3">
-        <button type="submit" class="btn btn-info">增加Host</button>
+          <div class = "col-md-9" style="padding-left:0">
+      <form @submit.prevent="addHost()" method="post">
+            <div class="input-group">
+              <label for="newHostName">HostName:&nbsp;&nbsp;&nbsp;</label>
+              <input type="text" class="form-control" id="newHostName" v-model="newHostName">
+              <label for="ipAddress">&nbsp;&nbsp;ip:&nbsp;&nbsp;&nbsp;</label>
+              <input id="ipAddress" class="form-control" v-model="ipAddress">
+              <button type="submit" class="btn btn-info">增加Host</button>
+            </div>
+                  </form>
+          </div>
+          <div class = "col-xs-3" style="padding-right:0">
+            <button  class="btn btn-info" @click="refreshed()">refresh</button>
+          </div>
         </div>
-        <div class = "col-md-5">
-        <input id="newHost" class="form-control" v-model="newHost">
-        </div>
-        <div class = "col-md-3">
-          <button  class="btn btn-info" @click="refresh()">refresh</button>
-        </div>
-        </div>
-      </form>
+      </div>
+      <br><br>
       <vuetable ref="vuetable"
         pagination-path="" :css="css.table"
+        :sort-order="sortOrder"
         @vuetable:pagination-data="onPaginationData" @vuetable:loading="onLoading" @vuetable:loaded="onLoaded"
         api-url="http://localhost:3000/todo"
-        :fields="['hostName', 'active','date']"
+        :fields="['hostName', 'ipAddress','active','date']"
       ></vuetable>
       <vuetable-pagination ref="pagination" :css="css.pagination" @vuetable-pagination:change-page="onChangePage"></vuetable-pagination>
     </div>
@@ -31,7 +38,8 @@ export default {
   },
   data(){
     return{
-    newHost:undefined,
+    newHostName:undefined,
+    ipAddress:undefined,
     css: {
         table: {
           tableClass: 'table table-striped table-bordered table-hovered',
@@ -53,9 +61,15 @@ export default {
             next: '',
             last: ''
           }
-        }  
+        }
+      },
+      sortOrder: [
+      { field: 'hostName', direction: 'asc' }
+      ]   
     }
-    }
+  },
+   mounted () {
+
   },
   methods:{
     onPaginationData (paginationData) {
@@ -71,8 +85,11 @@ export default {
       console.log('loaded! .. hide your spinner here')
     },
     addHost(){
+      console.log('ipAddress'+ this.ipAddress)
+      console.log('newHostName' + this.newHostName)
       axios.post('http://localhost:3000/addHost',{
-        newHost:this.newHost
+        newHost:this.newHostName,
+        ipAddress: this.ipAddress
       })
       .then((res)=>{
         console.log(res)
@@ -80,7 +97,7 @@ export default {
         console.log(err)
       })
     },
-    refresh(){
+    refreshed(){
       this.$refs.vuetable.refresh()
     }
   }

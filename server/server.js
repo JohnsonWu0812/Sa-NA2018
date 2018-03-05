@@ -7,7 +7,7 @@ let oldHostList = []
 let count =  0
 let info = {}
 let bodyPaser = require('body-parser')
-let host2 = ['192.168.0.1','192.168.0.2','google.com','yahoo.com.tw']
+let host2 = []
 const cors = require('cors')
 
 app.use(bodyPaser.urlencoded({extended:true}))
@@ -19,20 +19,15 @@ app.listen(3000, function () {
   getHostStatus()
   console.log('Example app listening on port 3000!');
 })
-
-
-function pingHost(){
-  
-}
-
 function getHostStatus(){
 
-  var frequency = 7000 
+  var frequency = 60000 
       setInterval(function() {
         host2.forEach(function(host){
-          ping.sys.probe(host, function(active){
-            info.hostName = host
-            info.active =  active ? 'Active' :  ' Non-Active'
+          ping.sys.probe(host.ipAddress, function(active){
+            info.hostName = host.hostName
+            info.ipAddress = host.ipAddress
+            info.active =  active ? 'Up' :  'Down'
             info.date = moment().format('YYYY/MM/DD  HH:mm:ss')
             hostList.push(info)
             info ={}
@@ -44,17 +39,22 @@ function getHostStatus(){
       }, frequency)
 }
 app.post('/addHost',function(req,res){
-  console.log('req.body  :' +JSON.stringify(req.body.newHost))
+  console.log('  console.log(host2.map(function(e) { return e.hostName}).indexOf(req.body.newHost))'+host2.map(function(e) { return e.hostName}) + 'req.body.newHost'+req.body.newHost)
   if(req.body.newHost === undefined)
   res.send('just space')
-  else if(host2.indexOf(req.body.newHost) > 0 )
+  else if(host2.map(function(e) { return e.hostName}).indexOf(req.body.newHost)> 0 )
    res.send('There has same host')
   else{
-    host2.push(req.body.newHost)
-    ping.sys.probe(req.body.newHost,function(active){
+    host2.push(
+      {
+      hostName:req.body.newHost,
+      ipAddress : req.body.ipAddress
+    })
+    ping.sys.probe(req.body.ipAddress,function(active){
       hostList.push({
         'hostName' : req.body.newHost,
-        'active' :   active ? 'Active' :  ' Non-Active',
+        'ipAddress': req.body.ipAddress,
+        'active' :   active ? 'Up' :  'Down',
         'date' : moment().format('YYYY/MM/DD  HH:mm:ss')
       })
     })
