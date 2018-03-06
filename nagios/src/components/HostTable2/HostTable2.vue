@@ -17,13 +17,12 @@
             </span>
       </form>
     </div>
+    <br>
     <div class="row">
       <vuetable ref="vuetable" pagination-path="" :css="css.table" :sort-order="sortOrder" @vuetable:pagination-data="onPaginationData" @vuetable:loading="onLoading" @vuetable:loaded="onLoaded" api-url="http://localhost:3000/todo" :fields="fields">
         <template slot="actions" slot-scope="props">
-                  <div class="table-button-container">
-                    <button class="btn btn-danger btn-sm" :disabled="buttonDisable" @click="deleteHost(props.rowData)">
+                    <button class="btn btn-danger btn-sm " :disabled="buttonDisable" @click="deleteHost(props.rowData)">
                       <span class="glyphicon glyphicon-trash"></span>刪除主機</button>&nbsp;&nbsp;
-                  </div>
         </template>
       </vuetable>
       <vuetable-pagination ref="pagination" :css="css.pagination" @vuetable-pagination:change-page="onChangePage"></vuetable-pagination>
@@ -40,14 +39,12 @@
         newHostName: undefined,
         ipAddress: undefined,
         buttonDisable:false,
-        btnDisableTime:4000,
+        btnDisableTime:3000,
         css: {
           table: {
-            tableClass: 'table table-striped table-bordered table-hovered',
+            tableClass: 'ui blue selectable celled stackable attached table',
             loadingClass: 'loading',
-            ascendingIcon: 'glyphicon glyphicon-chevron-up',
-            descendingIcon: 'glyphicon glyphicon-chevron-down',
-            handleIcon: 'glyphicon glyphicon-menu-hamburger'
+            handleIcon: 'glyphicon glyphicon-menu-hamburger',
           },
           pagination: {
             infoClass: 'pull-left',
@@ -65,24 +62,34 @@
           }
         },
         sortOrder: [{
+          sortField: 'hostName',
           field: 'hostName',
-          direction: 'asc'
+          direction: 'des'
         }],
-        fields: [{
+        fields: [
+          {
             name: 'hostName',
-            title: '<span class="orange glyphicon glyphicon-book"></span> 主機名稱'
+            title: '<span class="orange glyphicon glyphicon-book"></span> 主機名稱',
+            titleClass: 'center aligned',
+            dataClass: 'center aligned'
           },
           {
             name: 'ipAddress',
-            title: 'IP'
+            title: 'IP',
+             titleClass: 'center aligned',
+            dataClass: 'center aligned'
           },
           {
             name: 'active',
-            title: '狀態'
+            title: '狀態',
+            titleClass: 'center aligned',
+            dataClass: 'center aligned',
           },
           {
             name: 'date',
-            title: '檢查時間'
+            title: '檢查時間',
+            titleClass: 'center aligned',
+            dataClass: 'center aligned'
           },
           '__slot:actions'
         ],
