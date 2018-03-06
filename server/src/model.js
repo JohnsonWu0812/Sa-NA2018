@@ -1,16 +1,15 @@
 var fs = require('fs')
 function saveData(hostList){
+  let content = JSON.stringify(hostList)
   var file = fs.createWriteStream('./hostList.txt')
   file.on('error', function(err) { /* error handling */ })
-     file.write(hostList.join(' \n'));
+     file.write(content)
   file.end()
 }
 function readData(callback){
-  let hostList= []
   fs.readFile("./hostList.txt", "utf8", function(err, data){
-    hostList.push(data)
-    callback(data) 
+    if(data!=undefined)
+    callback(JSON.parse(data))
   })
-  console.log(hostList)
 }
-  export default { saveData , readData}
+export default { saveData , readData}

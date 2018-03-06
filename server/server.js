@@ -1,3 +1,4 @@
+import model from './src/model'
 var express = require('express')
 var app = express()
 var ping = require('ping')
@@ -8,6 +9,7 @@ let count =  0
 let info = {}
 let bodyPaser = require('body-parser')
 let host2 = []
+
 const cors = require('cors')
 
 app.use(bodyPaser.urlencoded({extended:true}))
@@ -16,30 +18,42 @@ app.use(cors())
 app.options('*',cors())
 
 app.listen(3000, function () {
+  readHostData()
   getHostStatus()
   console.log('Example app listening on port 3000!');
 })
-function getHostStatus(){
+function readHostData()
+{
+  model.readData(function(data){
+    host2 = data
+    console.log(data)
+    pingHost()
+  })
+}
 
-  var frequency = 60000 
+function pingHost(){
+  host2.forEach(function(host){
+    ping.sys.probe(host.ipAddress, function(active){
+      info.hostName = host.hostName
+      info.ipAddress = host.ipAddress
+      info.active =  active ? 'Up' :  'Down'
+      info.date = moment().format('YYYY/MM/DD  HH:mm:ss')
+      hostList.push(info)
+      info ={}
+    })
+  })
+}
+
+function getHostStatus(){
+  var frequency = 6000 
       setInterval(function() {
-        host2.forEach(function(host){
-          ping.sys.probe(host.ipAddress, function(active){
-            info.hostName = host.hostName
-            info.ipAddress = host.ipAddress
-            info.active =  active ? 'Up' :  'Down'
-            info.date = moment().format('YYYY/MM/DD  HH:mm:ss')
-            hostList.push(info)
-            info ={}
-          })
-        })
+        pingHost()
         if(oldHostList !== hostList)
           oldHostList = hostList
         hostList = []
       }, frequency)
 }
 app.post('/addHost',function(req,res){
-  console.log('  console.log(host2.map(function(e) { return e.hostName}).indexOf(req.body.newHost))'+host2.map(function(e) { return e.hostName}) + 'req.body.newHost'+req.body.newHost)
   if(req.body.newHost === undefined)
   res.send('just space')
   else if(host2.map(function(e) { return e.hostName}).indexOf(req.body.newHost)> 0 )
@@ -50,6 +64,7 @@ app.post('/addHost',function(req,res){
       hostName:req.body.newHost,
       ipAddress : req.body.ipAddress
     })
+    model.saveData(host2)
     ping.sys.probe(req.body.ipAddress,function(active){
       hostList.push({
         'hostName' : req.body.newHost,
