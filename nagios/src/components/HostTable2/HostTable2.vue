@@ -1,24 +1,31 @@
 <template>
   <div>
     <div class="row">
-        <form @submit.prevent="addHost()" method="post">
-          <div class="col-sm-4" style="padding-left:0px;">
-            <label for="newHostName">HostName</label>
-            <input type="text" class="form-control" id="newHostName" v-model="newHostName">
-          </div>
-          <div class="col-sm-4" style="padding-left:0px;">
-            <label for="ipAddress">IP</label>
-            <input id="ipAddress"  class="form-control" v-model="ipAddress">
-          </div>
-              <label>&nbsp;</label>
-          <span class="col-xs-4" style="padding-right:0px;">
-              <button type="submit" class="btn btn-success pull-left">增加Host&nbsp;</button>
-              <button class="btn btn-info pull-right" type="button" @click="refreshed()">重新整理</button>
-          </span>
-        </form>
+      <form @submit.prevent="addHost()" method="post">
+        <div class="col-sm-4" style="padding-left:0px;">
+          <label for="newHostName">HostName</label>
+          <input type="text" class="form-control" id="newHostName" v-model="newHostName">
+        </div>
+        <div class="col-sm-4" style="padding-left:0px;">
+          <label for="ipAddress">IP</label>
+          <input id="ipAddress" class="form-control" v-model="ipAddress">
+        </div>
+        <label>&nbsp;</label>
+        <span class="col-xs-4" style="padding-right:0px;">
+                <button type="submit" class="btn btn-success pull-left">增加Host&nbsp;</button>
+                <button class="btn btn-info pull-right" type="button" @click="refreshed()">重新整理</button>
+            </span>
+      </form>
     </div>
-       <div class="row">
-      <vuetable ref="vuetable" pagination-path="" :css="css.table" :sort-order="sortOrder" @vuetable:pagination-data="onPaginationData" @vuetable:loading="onLoading" @vuetable:loaded="onLoaded" api-url="http://localhost:3000/todo" :fields="['hostName', 'ipAddress','active','date']"></vuetable>
+    <div class="row">
+      <vuetable ref="vuetable" pagination-path="" :css="css.table" :sort-order="sortOrder" @vuetable:pagination-data="onPaginationData" @vuetable:loading="onLoading" @vuetable:loaded="onLoaded" api-url="http://localhost:3000/todo" :fields="fields">
+        <template slot="actions" slot-scope="props">
+                  <div class="table-button-container">
+                    <button class="btn btn-danger btn-sm" @click="deleteHost(props.rowData)">
+                      <span class="glyphicon glyphicon-trash"></span>刪除主機</button>&nbsp;&nbsp;
+                  </div>
+        </template>
+      </vuetable>
       <vuetable-pagination ref="pagination" :css="css.pagination" @vuetable-pagination:change-page="onChangePage"></vuetable-pagination>
     </div>
   </div>
@@ -58,7 +65,25 @@
         sortOrder: [{
           field: 'hostName',
           direction: 'asc'
-        }]
+        }],
+        fields: [{
+            name: 'hostName',
+            title: '<span class="orange glyphicon glyphicon-book"></span> 主機名稱'
+          },
+          {
+            name: 'ipAddress',
+            title: 'IP'
+          },
+          {
+            name: 'active',
+            title: '狀態'
+          },
+          {
+            name: 'date',
+            title: '檢查時間'
+          },
+          '__slot:actions'
+        ],
       }
     },
     mounted() {},
@@ -89,12 +114,17 @@
             console.log(err)
           })
       },
-      initForm(){
-        this.newHostName =  undefined
+      initForm() {
+        this.newHostName = undefined
         this.ipAddress = undefined
       },
       refreshed() {
         this.$refs.vuetable.refresh()
+      },
+      deleteHost(hostData){
+        axios.post('http://localhost:3000/deleteHost',{
+          hostName:hostData.hostName
+        })
       }
     }
   }

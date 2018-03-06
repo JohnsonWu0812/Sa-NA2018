@@ -26,31 +26,38 @@ function readHostData()
 {
   model.readData(function(data){
     host2 = data
-    console.log(data)
     pingHost()
   })
 }
 
 function pingHost(){
-  host2.forEach(function(host){
-    ping.sys.probe(host.ipAddress, function(active){
-      info.hostName = host.hostName
-      info.ipAddress = host.ipAddress
-      info.active =  active ? 'Up' :  'Down'
-      info.date = moment().format('YYYY/MM/DD  HH:mm:ss')
-      hostList.push(info)
-      info ={}
+  hostList = []
+  if(host2.length === 0)
+  oldHostList = []
+  function getEachStatus(callback){
+    host2.forEach(function(host){
+      ping.sys.probe(host.ipAddress, function(active){
+        info.hostName = host.hostName
+        info.ipAddress = host.ipAddress
+        info.active =  active ? 'Up' :  'Down'
+        info.date = moment().format('YYYY/MM/DD  HH:mm:ss')
+        hostList.push(info)
+        info ={}
+      })
+      if(callback) callback();
     })
+  }   
+  getEachStatus(()=>{
+    if(oldHostList !== hostList)
+    oldHostList = hostList
+    console.log(oldHostList)
   })
 }
 
 function getHostStatus(){
-  var frequency = 6000 
+  var frequency = 60000 
       setInterval(function() {
         pingHost()
-        if(oldHostList !== hostList)
-          oldHostList = hostList
-        hostList = []
       }, frequency)
 }
 app.post('/addHost',function(req,res){
@@ -65,17 +72,21 @@ app.post('/addHost',function(req,res){
       ipAddress : req.body.ipAddress
     })
     model.saveData(host2)
-    ping.sys.probe(req.body.ipAddress,function(active){
-      hostList.push({
-        'hostName' : req.body.newHost,
-        'ipAddress': req.body.ipAddress,
-        'active' :   active ? 'Up' :  'Down',
-        'date' : moment().format('YYYY/MM/DD  HH:mm:ss')
-      })
-    })
-    if(oldHostList !== hostList)
-    oldHostList = hostList
+    pingHost()
     res.send('Host: "'+ req.body.newHost+ '" was added success')
+  }
+})
+
+app.post('/deleteHost',function(req,res){
+  deleteHost(function(host2){
+    pingHost()
+    model.saveData(host2)
+  })
+  function deleteHost(callback){
+    host2 = host2.filter(function(hostData){
+      return hostData.hostName !== req.body.hostName
+    })
+    callback(host2)
   }
 })
 
@@ -108,6 +119,5 @@ app.get('/todo', function (req, res) {
     vuetableFormat.from = 1 + 10 * (current_page - 1)
     vuetableFormat.to = 10 * current_page
     vuetableFormat.data = oldHostList.slice(vuetableFormat.from - 1 , vuetableFormat.to)
-    console.log(vuetableFormat)
     res.json(vuetableFormat)
 })
