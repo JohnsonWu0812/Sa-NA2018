@@ -16,7 +16,6 @@ app.use(bodyPaser.urlencoded({extended:true}))
 app.use(bodyPaser.json())
 app.use(cors())
 app.options('*',cors())
-
 app.listen(3000, function () {
   readHostData()
   getHostStatus()
@@ -30,10 +29,14 @@ function readHostData()
   })
 }
 
-function pingHost(){
+function pingHost(callback){
   hostList = []
   if(host2.length === 0)
   oldHostList = []
+  getEachStatus(()=>{
+    if(oldHostList !== hostList)
+    oldHostList = hostList
+  })
   function getEachStatus(callback){
     host2.forEach(function(host){
       ping.sys.probe(host.ipAddress, function(active){
@@ -44,18 +47,15 @@ function pingHost(){
         hostList.push(info)
         info ={}
       })
-      if(callback) callback();
     })
-  }   
-  getEachStatus(()=>{
-    if(oldHostList !== hostList)
-    oldHostList = hostList
-    console.log(oldHostList)
-  })
+    if(callback) callback()
+  }
+  console.log("fisrt")
+  if(callback) callback()
 }
 
 function getHostStatus(){
-  var frequency = 60000 
+  var frequency = 600000 
       setInterval(function() {
         pingHost()
       }, frequency)
@@ -71,16 +71,23 @@ app.post('/addHost',function(req,res){
       hostName:req.body.newHost,
       ipAddress : req.body.ipAddress
     })
-    model.saveData(host2)
-    pingHost()
-    res.send('Host: "'+ req.body.newHost+ '" was added success')
+    pingHost(function(){
+      model.saveData(host2)
+      console.log("second")
+      res.send('Host: "'+ req.body.newHost+ '" was added success')
+    })
   }
 })
 
+
+
+
 app.post('/deleteHost',function(req,res){
   deleteHost(function(host2){
-    pingHost()
-    model.saveData(host2)
+    pingHost(()=>{
+      model.saveData(host2)
+      res.send('host'+ host2.hostName +'has been delete')
+    })
   })
   function deleteHost(callback){
     host2 = host2.filter(function(hostData){
@@ -89,6 +96,10 @@ app.post('/deleteHost',function(req,res){
     callback(host2)
   }
 })
+
+
+
+
 
 app.get('/todo', function (req, res) {
   let page = req.query.page
