@@ -72,23 +72,34 @@ app.post('/addHost',function(req,res){
       hostName:req.body.newHost,
       ipAddress : req.body.ipAddress
     })
-    pingHost(function(){
-      model.saveData(host2)
+    model.saveData(host2)
+    // pingHost(function(){
+    //   model.saveData(host2)
+    //   res.send('Host: "'+ req.body.newHost+ '" was added success')
+    // })
+    ping.sys.probe(req.body.ipAddress, function(active){
+      info.hostName = req.body.newHost
+      info.ipAddress = req.body.ipAddress
+      info.active =  active ? 'Up' :  'Down'
+      info.date = moment().format('YYYY/MM/DD  HH:mm:ss')
+      oldHostList.push(info)
+      info ={}
       res.send('Host: "'+ req.body.newHost+ '" was added success')
-    })
+    })  
   }
 })
 
 
 app.post('/deleteHost',function(req,res){
   deleteHost(function(host2){
-    pingHost(()=>{
-      model.saveData(host2)
-      res.send('host'+ host2.hostName +'has been delete')
+    model.saveData(host2)
+    res.send('host'+ host2.hostName +'has been delete')
     })
-  })
   function deleteHost(callback){
     host2 = host2.filter(function(hostData){
+      return hostData.hostName !== req.body.hostName
+    })
+    oldHostList = oldHostList.filter((hostData)=>{
       return hostData.hostName !== req.body.hostName
     })
     callback(host2)
