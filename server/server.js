@@ -73,10 +73,6 @@ app.post('/addHost',function(req,res){
       ipAddress : req.body.ipAddress
     })
     model.saveData(host2)
-    // pingHost(function(){
-    //   model.saveData(host2)
-    //   res.send('Host: "'+ req.body.newHost+ '" was added success')
-    // })
     ping.sys.probe(req.body.ipAddress, function(active){
       info.hostName = req.body.newHost
       info.ipAddress = req.body.ipAddress

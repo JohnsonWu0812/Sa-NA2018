@@ -39,7 +39,7 @@
         newHostName: undefined,
         ipAddress: undefined,
         buttonDisable:false,
-        btnDisableTime:500,
+        btnDisableTime:200,
         css: {
           table: {
             tableClass: 'ui blue selectable celled stackable attached table',
