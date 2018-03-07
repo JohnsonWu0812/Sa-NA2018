@@ -17,17 +17,14 @@ app.use(bodyPaser.json())
 app.use(cors())
 app.options('*',cors())
 app.listen(3000, function () {
-  readHostData()
-  getHostStatus()
-  console.log('Example app listening on port 3000!');
-})
-function readHostData()
-{
   model.readData(function(data){
     host2 = data
     pingHost()
   })
-}
+  intervalGetHostStatus()
+  console.log('Example app listening on port 3000!');
+})
+
 
 function pingHost(callback){
   hostList = []
@@ -50,11 +47,10 @@ function pingHost(callback){
     })
     if(callback) callback()
   }
-  console.log("fisrt")
   if(callback) callback()
 }
 
-function getHostStatus(){
+function intervalGetHostStatus(){
   var frequency = 600000 
       setInterval(function() {
         pingHost()
@@ -73,13 +69,10 @@ app.post('/addHost',function(req,res){
     })
     pingHost(function(){
       model.saveData(host2)
-      console.log("second")
       res.send('Host: "'+ req.body.newHost+ '" was added success')
     })
   }
 })
-
-
 
 
 app.post('/deleteHost',function(req,res){
@@ -96,10 +89,6 @@ app.post('/deleteHost',function(req,res){
     callback(host2)
   }
 })
-
-
-
-
 
 app.get('/todo', function (req, res) {
   let page = req.query.page
