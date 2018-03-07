@@ -39,7 +39,7 @@
         newHostName: undefined,
         ipAddress: undefined,
         buttonDisable:false,
-        btnDisableTime:3000,
+        btnDisableTime:1000,
         css: {
           table: {
             tableClass: 'ui blue selectable celled stackable attached table',
@@ -116,6 +116,7 @@
             ipAddress: this.ipAddress
           })
           .then((res) => {
+            console.log(res)
           var scope = this
             setTimeout(function(){
               console.log('after '+scope.btnDisableTime/1000+' sec buttom will enable')

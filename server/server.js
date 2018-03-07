@@ -31,23 +31,28 @@ function pingHost(callback){
   if(host2.length === 0)
   oldHostList = []
   getEachStatus(()=>{
-    if(oldHostList !== hostList)
-    oldHostList = hostList
-  })
-  function getEachStatus(callback){
-    host2.forEach(function(host){
-      ping.sys.probe(host.ipAddress, function(active){
-        info.hostName = host.hostName
-        info.ipAddress = host.ipAddress
-        info.active =  active ? 'Up' :  'Down'
-        info.date = moment().format('YYYY/MM/DD  HH:mm:ss')
-        hostList.push(info)
-        info ={}
-      })
+      if(oldHostList !== hostList)
+      oldHostList = hostList
+      if(callback) callback()
     })
-    if(callback) callback()
+  function getEachStatus(callback){
+    var count=0
+      if(host2.length===0)
+      callback()
+        host2.forEach(function(host){
+          count++
+          ping.sys.probe(host.ipAddress, function(active){
+            info.hostName = host.hostName
+            info.ipAddress = host.ipAddress
+            info.active =  active ? 'Up' :  'Down'
+            info.date = moment().format('YYYY/MM/DD  HH:mm:ss')
+            hostList.push(info)
+            info ={}
+          })
+          if(count== host2.length)
+          if(callback) callback()
+    })
   }
-  if(callback) callback()
 }
 
 function intervalGetHostStatus(){
@@ -91,6 +96,7 @@ app.post('/deleteHost',function(req,res){
 })
 
 app.get('/todo', function (req, res) {
+  console.log(oldHostList)
   let page = req.query.page
   let per_page = req.query.per_page
   let current_page = 1
