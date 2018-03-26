@@ -1,7 +1,8 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import HelloWorld from '@/components/HelloWorld'
-import HostTable2 from '../components/HostTable2/HostTable2'
+import HostTable from '../components/HostTable/HostTable'
+import Contact from '../components/Contact/Contact'
+
 
 Vue.use(Router)
 
@@ -10,7 +11,12 @@ export default new Router({
     {
       path: '/nagios-hw1',
       name: 'HostTable',
-      component: HostTable2
+      component: HostTable
+    },
+    {
+      path: '/conTact',
+      name: 'Contact',
+      component: Contact
     }
   ]
 })
