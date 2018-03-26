@@ -1,12 +1,6 @@
 <template>
     <div class ="row">
        <vuetable ref="vuetable" pagination-path="" :fields="fields" :sort-order="sortOrder" :css="css.table" :per-page="5" @vuetable:pagination-data="onPaginationData" @vuetable:loading="onLoading" @vuetable:loaded="onLoaded" :api-url="contactUrl">
-            <template slot="actions" slot-scope="props">
-                    <div class="table-button-container">
-                         <button class="btn btn-success btn-sm" @click="enterCourse(props.rowData)">
-                         <span class="glyphicon glyphicon-stats"></span> 進入課程</button>
-                    </div>
-            </template>
           </vuetable>
          <vuetable-pagination ref="pagination" :css="css.pagination" @vuetable-pagination:change-page="onChangePage"></vuetable-pagination>
     </div>
@@ -21,26 +15,25 @@ export default {
           title: '<span class="orange glyphicon glyphicon-book"></span> contact name'
         },
         {
+            name: 'coursedescription',
+            title: 'Telephone'
+        },
+        {
           name: 'courseteacher',
-          title: 'email address1' 
+          title: 'Email' 
         },
         {
           name: 'classtime',
-          title: 'email address2'
+          title: 'Facebook'
         },
         {
           name: 'population',
-          title: 'email address3'
+          title: 'LineID'
         },
         {
           name: 'coursedescription',
-          title: 'email address4'
+          title: 'Skype'
         },
-        {
-          name: 'coursedescription',
-          title: 'email address5'
-        },
-        '__slot:actions'
       ],
       sortOrder: [
       { field: 'name', direction: 'asc' }

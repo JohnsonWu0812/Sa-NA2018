@@ -9,6 +9,7 @@ import Vuetable from '../node_modules/vuetable-2/src/components/Vuetable'
 import VueTablePagination from '../node_modules/vuetable-2/src/components/VueTablePagination'
 import store from './store'
 
+
 Vue.config.productionTip = false
 Vue.component('vuetable', Vuetable)
 Vue.component('vuetable-pagination', VueTablePagination)

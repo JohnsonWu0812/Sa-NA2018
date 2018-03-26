@@ -142,3 +142,38 @@ app.get('/getHostsData', function (req, res) {
       res.json(vuetableFormat)
  
 })
+app.post('/addContact',function(req,res){
+
+})
+app.get('/getContactsData', function (req, res) {
+  let page = req.query.page
+  let per_page = req.query.per_page
+  let current_page = 1
+  let last_page = 1
+  let prev_page_url = null
+  let domain = "http://localhost:3000/todo"
+  let vuetableFormat = {}
+  if(page){
+    current_page = page * 1
+  }
+    if(responseList.length % 10 === 0 && responseList.length !== 0){
+      last_page = responseList.length / 10
+    }
+    else{
+        last_page = Math.round(responseList.length / 10) + 1
+    }                               
+    if(current_page > 1){
+        prev_page_url = domain + '&sort=&page=' + (current_page - 1) +'&per_page=' + per_page
+    }             
+    vuetableFormat.total = responseList.length
+    vuetableFormat.per_page = per_page
+    vuetableFormat.current_page = current_page
+    vuetableFormat.last_page = last_page
+    vuetableFormat.next_page_url = domain + '&sort=&page=' + (current_page + 1) +'&per_page=' + per_page
+    vuetableFormat.prev_page_url = prev_page_url
+    vuetableFormat.from = 1 + 10 * (current_page - 1)
+    vuetableFormat.to = 10 * current_page
+    vuetableFormat.data = responseList.slice(vuetableFormat.from - 1 , vuetableFormat.to)
+    res.json(vuetableFormat)
+
+})

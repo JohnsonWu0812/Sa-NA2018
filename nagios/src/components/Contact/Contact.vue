@@ -5,7 +5,8 @@
        <a class="navbar-brand">{{this.hostName}}</a>&nbsp;&nbsp;&nbsp;&nbsp;
     </ul>
     <ul class="nav navbar-nav navbar-right">
-            <button class="btn btn-primary btn-sm" @click="enterCourse(props.rowData)">
+        <add-contact></add-contact>
+            <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModal">
             <span class="glyphicon glyphicon-user"></span> 新增聯絡人</button>
             <button class="btn btn-primary btn-sm" @click="backList()">
             <span class="glyphicon glyphicon-log-out"></span> HostList</button>
@@ -21,15 +22,22 @@
 <script>
 import { mapGetters } from 'vuex'
 import ContactTable from './ContactTable'
-import ContactTopBar from './ContactTopBar'
+import AddContact from './AddContact'
+import swal from 'sweetalert2'
 
 export default {
   data(){
       return{
+          contactName:undefined,
+          email:undefined,
+          email2:undefined,
+          lineID:undefined,
+          facebook:undefined,
+          skype:undefined
       }
   },
   components: {
-      ContactTopBar,
+      AddContact,
     ContactTable
   },
   computed: {
@@ -41,7 +49,6 @@ export default {
                 path: '/nagios-hw1'
           })
       }
-
   }
 }
 </script>
