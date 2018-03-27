@@ -13,19 +13,26 @@
               <label for="contactName">姓名</label>
               <input class="form-control" id="contactName" placeholder="輸入姓名" v-model="contactName" />
             </div>
-          <div class="pull-left">
-            <label for="contactName">選擇通知方式</label>
-            <select v-model="selected" >
-              <option>Facebook</option>
-              <option>Telephone</option>
-              <option>Email</option>
-              <option>Skype</option>
-              <option>LineID</option>              
-            </select>
-              <input  class="input-sm" id="information" placeholder="輸入帳號" v-model="information">  
+            <div class="pull-left">
+              <label for="contactName">選擇通知方式</label>
+              <select v-model="selected">
+                <option>Facebook</option>
+                <option>Telephone</option>
+                <option>Email</option>
+                <option>Skype</option>
+                <option>LineID</option>              
+              </select>
+              <input  class="input-sm" id="information" placeholder="輸入帳號" v-model="information"><button type="button" class="btn btn-default" @click="addNewTodo2"><span class="glyphicon glyphicon-plus"></span></button>
+            </div>
+            <div>
+              <div class="col-xs-12" v-for="(data, index) in contactData" v-bind:key="data.id" v-bind:type="data.type" v-bind:address="data.address">  <div  class ="form-group pull-left" style="margin-top: 10px;margin-bottom:0px;" >
+                {{data.type}} :{{ data.address }}
+                <button type="button" class="btn btn-default" v-on:click="contactData.splice(index, 1)"><span class="glyphicon glyphicon-minus"></span></button>
+                </div>
+                </div>
             </div>
           </form>
-            <br>
+          <br>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
@@ -35,21 +42,44 @@
     </div>
   </div>
 </template>
+
 <script>
-export default {
-  data(){
-    return{
-      contactName:undefined,
-      selected:undefined,
-      information:undefined
-    }
-  },
-  methods:{
-    addContact(){
-      console.log(this.selected)
-      console.log(this.information)
-      console.log(this.contactName)
+  export default {
+    data() {
+      return {
+        contactData: [],
+        newId: 1,
+        contactName: undefined,
+        selected: undefined,
+        information: undefined
+      }
+    },
+    methods: {
+      addContact() {
+        console.log(this.selected)
+        console.log(this.information)
+        console.log(this.contactName)
+      },
+      //  addNewTodo2: function () {
+      //   this.todos.push({
+      //     id: this.nextTodoId++,
+      //     title: this.newTodoText
+      //   })
+      //   this.newTodoText = ''
+      //   console.log(this.todos)
+      // },
+      addNewTodo2: function() {
+        var data={
+          id: this.newId++,
+          type: this.selected,
+          address: this.information
+        }
+        this.contactData.push(data)
+        data={}
+        this.selected = ''
+        this.information = ''
+        console.log(this.contactData.length)
+      }
     }
   }
-}
 </script>
