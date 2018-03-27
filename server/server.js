@@ -7,7 +7,7 @@ var moment = require('moment')
 const cors = require('cors')
 let bodyPaser = require('body-parser')
 let responseList = []
-let hostList = []
+let hostList =[]
 let setIntervalId
 
 app.use(bodyPaser.urlencoded({extended:true}))
@@ -19,10 +19,16 @@ app.options('*',cors())
 app.listen(3000, function () {
   fileOperater.readData(function(data){
     hostList = data
-    pingHost()
+    for(var i = 0 ; i<hostList.length ; i++)
+    {
+      if(hostList[i].contact===undefined)
+      hostList[i].contact=[]
+    }
     setEachResponeHost(function(){
       updateAllHostInterval()
+      console.log(hostList)
       console.log('All Host Data were added ')
+
     })
   })
   
@@ -66,10 +72,12 @@ function updateAllHostInterval(){
 function setResponseHost(host,callback){
   var hostInfo = {}
   ping.sys.probe(host.ipAddress, function(active){
+    hostInfo.contact = []
     hostInfo.hostName = host.hostName
     hostInfo.ipAddress = host.ipAddress
     hostInfo.active =  active ? 'Up' :  'Down'
     hostInfo.date = moment().format('YYYY/MM/DD  HH:mm:ss')
+    hostInfo.contact.push(host.contact)
     if(callback)callback(hostInfo)
   })  
 }
@@ -88,7 +96,6 @@ app.post('/addHost',function(req,res){
     fileOperater.saveData(hostList)
     setResponseHost(req.body,function(hostInfo){
       res.send('Host: "'+ req.body.hostName + '" was added success')
-      console.log(hostInfo)
       responseList.push(hostInfo)
     })
   }
@@ -139,13 +146,34 @@ app.get('/getHostsData', function (req, res) {
       vuetableFormat.from = 1 + 10 * (current_page - 1)
       vuetableFormat.to = 10 * current_page
       vuetableFormat.data = responseList.slice(vuetableFormat.from - 1 , vuetableFormat.to)
+      console.log(vuetableFormat.data)
       res.json(vuetableFormat)
  
 })
-app.post('/addContact',function(req,res){
-
-})
-app.get('/getContactsData', function (req, res) {
+app.get('/getContact',function(req,res){
+  var specificHost = responseList.filter((eachHost)=>{
+    return eachHost.hostName === req.query.hostName
+  })
+  var contactList = specificHost[0].contact[0]
+  console.log(contactList)
+  if(contactList !== undefined){
+  for(var i=0 ; i <contactList.length;i++)
+  {
+    for(var j=0 ; j<contactList[i].communicate.length;j++)
+    {
+      if(contactList[i].communicate[j].type==='Facebook')
+        contactList[i].facebookAddress =  contactList[i].communicate[j].address
+      if(contactList[i].communicate[j].type==='Telephone')
+        contactList[i].telephoneAddress =  contactList[i].communicate[j].address
+      if(contactList[i].communicate[j].type==='Email')
+        contactList[i].emailAddress =  contactList[i].communicate[j].address
+      if(contactList[i].communicate[j].type==='Skype')
+        contactList[i].skypeAddress =  contactList[i].communicate[j].address
+      if(contactList[i].communicate[j].type==='LineID')
+        contactList[i].lineIDAddress =  contactList[i].communicate[j].address
+    }
+  }
+}
   let page = req.query.page
   let per_page = req.query.per_page
   let current_page = 1
@@ -156,16 +184,16 @@ app.get('/getContactsData', function (req, res) {
   if(page){
     current_page = page * 1
   }
-    if(responseList.length % 10 === 0 && responseList.length !== 0){
-      last_page = responseList.length / 10
+    if(contactList.length % 10 === 0 &&contactList.length !== 0){
+      last_page =contactList.length / 10
     }
     else{
-        last_page = Math.round(responseList.length / 10) + 1
+        last_page = Math.round(specificHost[0].contact.length / 10) + 1
     }                               
     if(current_page > 1){
         prev_page_url = domain + '&sort=&page=' + (current_page - 1) +'&per_page=' + per_page
     }             
-    vuetableFormat.total = responseList.length
+    vuetableFormat.total =contactList.length
     vuetableFormat.per_page = per_page
     vuetableFormat.current_page = current_page
     vuetableFormat.last_page = last_page
@@ -173,7 +201,23 @@ app.get('/getContactsData', function (req, res) {
     vuetableFormat.prev_page_url = prev_page_url
     vuetableFormat.from = 1 + 10 * (current_page - 1)
     vuetableFormat.to = 10 * current_page
-    vuetableFormat.data = responseList.slice(vuetableFormat.from - 1 , vuetableFormat.to)
+    vuetableFormat.data =contactList.slice(vuetableFormat.from - 1 , vuetableFormat.to)
+    console.log(vuetableFormat.data)
     res.json(vuetableFormat)
+  
+})
 
+app.post('/addContact',function(req,res){
+  console.log(hostList)
+  for(var i = 0 ; i <responseList.length ;i++){
+    if(hostList[i].hostName === req.body.hostName)
+    hostList[i].contact === null? hostList[i].contact = req.body :hostList[i].contact.push(req.body)
+    if(responseList[i].hostName === req.body.hostName)
+      responseList[i].contact === null? responseList[i].contact = req.body :responseList[i].contact.push(req.body)
+    if(i === responseList.length-1)
+    {
+      fileOperater.saveData(hostList)
+      res.send('add success')
+    }
+  }
 })

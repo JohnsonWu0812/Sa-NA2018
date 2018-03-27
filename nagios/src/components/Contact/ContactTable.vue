@@ -3,6 +3,7 @@
        <vuetable ref="vuetable" pagination-path="" :fields="fields" :sort-order="sortOrder" :css="css.table" :per-page="5" @vuetable:pagination-data="onPaginationData" @vuetable:loading="onLoading" @vuetable:loaded="onLoaded" :api-url="contactUrl">
           </vuetable>
          <vuetable-pagination ref="pagination" :css="css.pagination" @vuetable-pagination:change-page="onChangePage"></vuetable-pagination>
+         <button class="btn btn-primary btn-sm" @click="refresh()">refresh</button>
     </div>
 </template>
 <script>
@@ -11,27 +12,27 @@ export default {
     return {
       fields: [
         {
-          name: 'coursename',
+          name: 'contactName',
           title: '<span class="orange glyphicon glyphicon-book"></span> contact name'
         },
         {
-            name: 'coursedescription',
+            name: 'telephoneAddress',
             title: 'Telephone'
         },
         {
-          name: 'courseteacher',
+          name: 'emailAddress',
           title: 'Email' 
         },
         {
-          name: 'classtime',
+          name: 'facebookAddress',
           title: 'Facebook'
         },
         {
-          name: 'population',
+          name: 'lineIDAddress',
           title: 'LineID'
         },
         {
-          name: 'coursedescription',
+          name: 'skypeAddress',
           title: 'Skype'
         },
       ],
@@ -69,6 +70,9 @@ export default {
   },
   props: ['hostIP', 'contactUrl'],
   methods: {
+      refresh(){
+          this.$refs.vuetable.refresh()
+      },
     onPaginationData (paginationData) {
       this.$refs.pagination.setPaginationData(paginationData)
     },

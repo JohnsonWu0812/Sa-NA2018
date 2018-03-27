@@ -5,7 +5,7 @@
        <a class="navbar-brand">{{this.hostName}}</a>&nbsp;&nbsp;&nbsp;&nbsp;
     </ul>
     <ul class="nav navbar-nav navbar-right">
-        <add-contact></add-contact>
+        <add-contact :hostName="this.hostName"></add-contact>
             <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModal">
             <span class="glyphicon glyphicon-user"></span> 新增聯絡人</button>
             <button class="btn btn-primary btn-sm" @click="backList()">

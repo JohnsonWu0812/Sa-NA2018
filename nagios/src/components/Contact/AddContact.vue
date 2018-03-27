@@ -22,7 +22,7 @@
                 <option>Skype</option>
                 <option>LineID</option>              
               </select>
-              <input  class="input-sm" id="information" placeholder="輸入帳號" v-model="information"><button type="button" class="btn btn-default" @click="addNewTodo2"><span class="glyphicon glyphicon-plus"></span></button>
+              <input  class="input-sm" id="information" placeholder="輸入帳號" v-model="information"><button type="button" class="btn btn-default" @click="addAddressData"><span class="glyphicon glyphicon-plus"></span></button>
             </div>
             <div>
               <div class="col-xs-12" v-for="(data, index) in contactData" v-bind:key="data.id" v-bind:type="data.type" v-bind:address="data.address">  <div  class ="form-group pull-left" style="margin-top: 10px;margin-bottom:0px;" >
@@ -36,7 +36,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-          <button type="button" class="btn btn-default" data-dismiss="modal" @click="addContact()">確認</button>
+          <button type="button" class="btn btn-default" @click="addContact()" data-dismiss="modal">確認</button>
         </div>
       </div>
     </div>
@@ -44,6 +44,7 @@
 </template>
 
 <script>
+const axios= require('axios')
   export default {
     data() {
       return {
@@ -54,21 +55,31 @@
         information: undefined
       }
     },
+    // mounted(){
+    //     console.log(this.hostName)      
+    // },
+    props: ['hostName'],
     methods: {
-      addContact() {
-        console.log(this.selected)
-        console.log(this.information)
-        console.log(this.contactName)
+      addContact:function() {
+        // console.log('fufufufu')
+        // console.log(this.contactName)
+        // console.log(this.contactData)
+        axios.post('http://localhost:3000/addContact', {
+            hostName:this.hostName,
+            contactName: this.contactName,
+            communicate: this.contactData
+          })
+          .then((res) => {
+            console.log(res)
+            this.$refs.vuetable.refresh()
+            this.contactData =[]
+            this.contactName =[]
+            this.newId = 1
+          }).catch((err) => {
+            console.log(err)
+          })
       },
-      //  addNewTodo2: function () {
-      //   this.todos.push({
-      //     id: this.nextTodoId++,
-      //     title: this.newTodoText
-      //   })
-      //   this.newTodoText = ''
-      //   console.log(this.todos)
-      // },
-      addNewTodo2: function() {
+      addAddressData: function() {
         var data={
           id: this.newId++,
           type: this.selected,
@@ -78,7 +89,6 @@
         data={}
         this.selected = ''
         this.information = ''
-        console.log(this.contactData.length)
       }
     }
   }
