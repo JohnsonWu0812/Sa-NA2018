@@ -1,4 +1,7 @@
-import FileOperater from './src/FileOperater'
+import FileOperater from './module/FileOperater'
+import Host from './module/Host'
+
+let hostManage
 let fileOperater = new FileOperater
 var express = require('express')
 var app = express()
@@ -19,6 +22,7 @@ app.options('*',cors())
 app.listen(3000, function () {
   fileOperater.readData(function(data){
     hostList = data
+    hostManage = new Host(hostList,responseList)
     for(var i = 0 ; i<hostList.length ; i++)
     {
       if(hostList[i].contact===undefined)
@@ -40,7 +44,7 @@ function setEachResponeHost(callback){
   var count = 0
   hostList.forEach(function(host){
     count++
-    setResponseHost(host,function(hostInfo){
+    hostManage.setResponseHost(host,function(hostInfo){
       responseList.push(hostInfo)
     })
   })
@@ -50,7 +54,7 @@ function setEachResponeHost(callback){
 
 function pingHost(callback){
         hostList.forEach(function(host){
-          setResponseHost(host,function(hostInfo){
+          hostManage.setResponseHost(host,function(hostInfo){
             for(var i = 0 ; i <responseList.length; i++)
             {
               if(responseList[i].hostName === host.hostName)
@@ -69,18 +73,6 @@ function updateAllHostInterval(){
         pingHost()
       }, frequency)
 }
-function setResponseHost(host,callback){
-  var hostInfo = {}
-  ping.sys.probe(host.ipAddress, function(active){
-    hostInfo.contact = []
-    hostInfo.hostName = host.hostName
-    hostInfo.ipAddress = host.ipAddress
-    hostInfo.active =  active ? 'Up' :  'Down'
-    hostInfo.date = moment().format('YYYY/MM/DD  HH:mm:ss')
-    hostInfo.contact.push(host.contact)
-    if(callback)callback(hostInfo)
-  })  
-}
 
 app.post('/addHost',function(req,res){
   if(req.body.hostName === undefined || req.body.ipAddress === undefined)
@@ -94,7 +86,7 @@ app.post('/addHost',function(req,res){
       ipAddress : req.body.ipAddress
     })
     fileOperater.saveData(hostList)
-    setResponseHost(req.body,function(hostInfo){
+    hostManage.setResponseHost(req.body,function(hostInfo){
       res.send('Host: "'+ req.body.hostName + '" was added success')
       responseList.push(hostInfo)
     })
