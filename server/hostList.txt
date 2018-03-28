@@ -1,1 +1,1 @@
-[{"hostName":"qweqwe","ipAddress":"wqeqwe","contact":[]}]
+[{"hostName":"google's Host","ipAddress":"8.8.8.8","contact":[{"hostName":"google's Host","contactName":"Amin","communicate":[{"id":1,"type":"Facebook","address":"Amin"}],"facebookAddress":"Amin"},{"hostName":"google's Host","contactName":"wefwefwedwdwe","communicate":[{"id":1,"type":"Telephone","address":"wef"},{"id":2,"type":"Skype","address":"qwdqwd"}]}]}]

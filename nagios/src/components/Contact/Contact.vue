@@ -13,7 +13,7 @@
     </ul>
     <div class="row">      
       <div class="col-md-12">
-           <contact-table :contactUrl="this.contactUrl" :hostIP="this.hostIP"></contact-table>
+           <contact-table :contactUrl="this.contactUrl" :hostName="this.hostName" :hostIP="this.hostIP"></contact-table>
       </div>
     </div>
 </div>

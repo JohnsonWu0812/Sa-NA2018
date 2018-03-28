@@ -1,9 +1,21 @@
+import FileOperater from './FileOperater'
+import Contact from './Contact'
+
 var ping = require('ping')
 var moment = require('moment')
 export default class Host{
-    constructor(hostList,responseList){
-        this.hostL = hostList
-        this.responseL = responseList
+    constructor(){
+        this.hostL = []
+        this.responseL = []
+        this.fileOperater = new FileOperater
+    }
+    startMoniter(callback){
+        var self = this
+        this.fileOperater.readData(function(data){
+            self.hostL  = data
+            callback(self.hostL)
+        })
+
     }
     setResponseHost(host,callback){
         var hostInfo = {}
@@ -18,7 +30,7 @@ export default class Host{
         })  
       }
     updateAllHostInterval(){
-        var frequency = 200
+        var frequency = 5000
         var self = this
         var setIntervalId  = setInterval(function() {
             self.pingHost()
@@ -33,13 +45,19 @@ export default class Host{
             {
               if(self.responseL[i].hostName === host.hostName)
                 {
+                    var s = self
+                    if(self.responseL[i].active !==  hostInfo.active)
+                    {
+                        var contact = new Contact()
+                        contact.emergencyContact(s.responseL[i].contact)
+                    }
                     self.responseL[i].active =  hostInfo.active
                     self.responseL[i].date  = hostInfo.date
                 }
             }
           })
         })
-        return this.responseList
+        return this.responseL
     }
     setEachResponeHost(callback){
         var count = 0
@@ -55,4 +73,24 @@ export default class Host{
     getAllHost(){
           return this.responseL
       }
+    getHostList(){
+            return this.hostL
+    }
+    deleteHost(req,callback){
+        var self = this
+        this.hostL = this.hostL.filter(function(hostData){
+            return hostData.hostName !== req.body.hostName
+        })
+        this.responseL = this.responseL.filter((hostData)=>{
+            return hostData.hostName !== req.body.hostName
+        })
+        callback(this.hostL)
+    }
+    setHostList(hostList){
+        this.hostL = hostList
+    }
+    setResponseH(responseList){
+        this.responseL = responseList
+    }
+
 }

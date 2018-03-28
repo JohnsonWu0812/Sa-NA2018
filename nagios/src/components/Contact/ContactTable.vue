@@ -1,6 +1,6 @@
 <template>
     <div class ="row">
-       <vuetable ref="vuetable" pagination-path="" :fields="fields" :sort-order="sortOrder" :css="css.table" :per-page="5" @vuetable:pagination-data="onPaginationData" @vuetable:loading="onLoading" @vuetable:loaded="onLoaded" :api-url="contactUrl">
+       <vuetable ref="vuetable" :append-params="params" http-method="post" pagination-path="" :fields="fields" :sort-order="sortOrder" :css="css.table" :per-page="5" @vuetable:pagination-data="onPaginationData" @vuetable:loading="onLoading" @vuetable:loaded="onLoaded" :api-url="contactUrl">
           </vuetable>
          <vuetable-pagination ref="pagination" :css="css.pagination" @vuetable-pagination:change-page="onChangePage"></vuetable-pagination>
          <button class="btn btn-primary btn-sm" @click="refresh()">refresh</button>
@@ -10,6 +10,9 @@
 export default {
   data () {
     return {
+      params:{
+        hostName:this.hostName
+      },
       fields: [
         {
           name: 'contactName',
@@ -68,7 +71,7 @@ export default {
       console.log(this.contactUrl)
     console.log(this.hostIP)
   },
-  props: ['hostIP', 'contactUrl'],
+  props: ['hostIP', 'contactUrl','hostName'],
   methods: {
       refresh(){
           this.$refs.vuetable.refresh()
