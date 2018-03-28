@@ -9,7 +9,7 @@ export default class Host{
         this.responseL = []
         this.fileOperater = new FileOperater
     }
-    startMoniter(callback){
+    startMonitorHost(callback){
         var self = this
         this.fileOperater.readData(function(data){
             self.hostL  = data
@@ -84,6 +84,7 @@ export default class Host{
         this.responseL = this.responseL.filter((hostData)=>{
             return hostData.hostName !== req.body.hostName
         })
+        this.fileOperater.saveData(this.hostL)
         callback(this.hostL)
     }
     setHostList(hostList){
@@ -92,5 +93,18 @@ export default class Host{
     setResponseH(responseList){
         this.responseL = responseList
     }
-
+    addHost(req,callback){
+        var self =this
+        this.hostL.push(
+            {
+            hostName : req.body.hostName,
+            ipAddress : req.body.ipAddress,
+            contact:[]
+          })
+          this.fileOperater.saveData(this.hostL)
+          this.setResponseHost(req.body,function(hostInfo){   
+            self.responseL.push(hostInfo)
+            callback()
+          })
+    }
 }

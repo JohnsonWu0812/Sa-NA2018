@@ -1,9 +1,7 @@
-import FileOperater from './module/FileOperater'
 import Host from './module/Host'
 import Contact from './module/Contact'
 
 let hostManage
-let fileOperater = new FileOperater
 var express = require('express')
 var app = express()
 const cors = require('cors')
@@ -21,7 +19,7 @@ startServer(){
   app.listen(3000, function () {
     var self = this
     hostManage = new Host()
-    hostManage.startMoniter(function(){
+    hostManage.startMonitorHost(function(){
       hostManage.setEachResponeHost(function(res){
         setIntervalId=hostManage.updateAllHostInterval()
       })
@@ -32,24 +30,14 @@ startServer(){
 addHost(){
   app.post('/addHost',function(req,res){
     var hostList = hostManage.getHostList()
-    var responseList = hostManage.getAllHost()
+    // var responseList = hostManage.getAllHost()
     if(req.body.hostName === undefined || req.body.ipAddress === undefined)
     res.send('')
     else if(hostList.map(function(e) { return e.hostName}).indexOf(req.body.hostName)> 0 )
     res.send('There has same host')
     else{
-      hostList.push(
-        {
-        hostName : req.body.hostName,
-        ipAddress : req.body.ipAddress,
-        contact:[]
-      })
-      fileOperater.saveData(hostList)
-      hostManage.setHostList(hostList)
-      hostManage.setResponseHost(req.body,function(hostInfo){
+      hostManage.addHost(req,function(){
         res.send('Host: "'+ req.body.hostName + '" was added success')
-        responseList.push(hostInfo)
-        hostManage.setResponseH(responseList)
       })
     }
   })
@@ -60,7 +48,7 @@ deleteHost(){
     clearInterval(setIntervalId)
     hostManage.deleteHost(req,function(hostList){
       setIntervalId=hostManage.updateAllHostInterval()
-          fileOperater.saveData(hostList)
+          
           res.send('host'+ hostList.hostName +'has been delete')
       })
   })
@@ -162,11 +150,10 @@ getContact(){
   })
 }
 addContact(){
-  app.post('/addContact',function(req,res){
+    app.post('/addContact',function(req,res){
     let contact = new Contact
     contact.addContact(req,hostManage,function(){
-      req =  {}
-      res.send('add sucess')
+      res.send('add success')
     })
     }
   )
