@@ -46,7 +46,7 @@ export default {
   methods:{
       backList(){
           this.$router.push({
-                path: '/nagios-hw1'
+                path: '/nagios-hw3'
           })
       }
   }

@@ -9,7 +9,7 @@ Vue.use(Router)
 export default new Router({
   routes: [
     {
-      path: '/nagios-hw1',
+      path: '/nagios-hw3',
       name: 'HostTable',
       component: HostTable
     },

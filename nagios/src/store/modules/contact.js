@@ -5,7 +5,7 @@ const state = {
   }
   
   const mutations = {
-    CONTACT (state, hostData) {
+    CONTACT (state, hostData) { 
       state.contactUrl = 'http://localhost:3000/getContact?hostName='+hostData.hostName
       state.ip = hostData.ipAddress
       state.hostName = hostData.hostName

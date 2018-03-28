@@ -55,15 +55,9 @@ const axios= require('axios')
         information: undefined
       }
     },
-    // mounted(){
-    //     console.log(this.hostName)      
-    // },
     props: ['hostName'],
     methods: {
       addContact:function() {
-        // console.log('fufufufu')
-        // console.log(this.contactName)
-        // console.log(this.contactData)
         axios.post('http://localhost:3000/addContact', {
             hostName:this.hostName,
             contactName: this.contactName,
@@ -75,6 +69,8 @@ const axios= require('axios')
             this.contactData =[]
             this.contactName =[]
             this.newId = 1
+            this.selected = ''
+            this.information = ''
           }).catch((err) => {
             console.log(err)
           })
