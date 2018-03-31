@@ -110,10 +110,12 @@ getContact(){
             contactList[i].skypeAddress =  contactList[i].communicate[j].address
           if(contactList[i].communicate[j].type==='LineID')
             contactList[i].lineIDAddress =  contactList[i].communicate[j].address
+          if(j===contactList[i].communicate.length - 1)
+            contactList[i].communicate =[]
         }
-      
+      }
     }
-    }
+    contactList
     let page = req.query.page
     let per_page = req.query.per_page
     let current_page = 1
@@ -144,9 +146,8 @@ getContact(){
       vuetableFormat.from = 1 + 10 * (current_page - 1)
       vuetableFormat.to = 10 * current_page
       vuetableFormat.data =contactList.slice(vuetableFormat.from - 1 , vuetableFormat.to)
-      console.log(vuetableFormat)
+      console.log(contactList)
       res.json(vuetableFormat)
-    
   })
 }
 addContact(){

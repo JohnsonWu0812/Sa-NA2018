@@ -1,5 +1,11 @@
 import FileOperater from './FileOperater'
+import FacebookObserver from './Observer/FacebookObserver'
+import EmailObserver from './Observer/FacebookObserver'
+
 export default class Contact{
+    constructor(){
+
+    }
     addContact(req,hostManage,callback){
         var hostList = hostManage.getHostList()
         var responseList = hostManage.getAllHost()
@@ -11,11 +17,8 @@ export default class Contact{
               if(hostList[i].contact === undefined)    
               hostList[i].contact = [req.body]
               else{
-                  console.log(hostList[i].contact)
                     hostList[i].contact.push(req.body)
                     responseList[i].contact = hostList[i].contact
-                  console.log(hostList[i].contact)
-                  console.log(hostList[i])                 
                 }
             }
             if(i === hostList.length-1)
@@ -25,7 +28,6 @@ export default class Contact{
               fileOperater.saveData(hostList)
             }
         }
-        callback(responseList , hostList)
     }
     emergencyContact(emergencyContact){
         console.log('emergecy'+JSON.stringify(emergencyContact))

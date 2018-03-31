@@ -1,5 +1,6 @@
 import FileOperater from './FileOperater'
 import Contact from './Contact'
+import HostData from './HostData'
 
 var ping = require('ping')
 var moment = require('moment')
@@ -95,16 +96,33 @@ export default class Host{
     }
     addHost(req,callback){
         var self =this
+        let host = new HostData(req.body.hostName , req.body.ipAddress)
+        host.contact = []
         this.hostL.push(
-            {
-            hostName : req.body.hostName,
-            ipAddress : req.body.ipAddress,
-            contact:[]
-          })
+          host)
           this.fileOperater.saveData(this.hostL)
           this.setResponseHost(req.body,function(hostInfo){   
             self.responseL.push(hostInfo)
             callback()
           })
+    }
+    attach(host,observer){
+        host.observerList.push(observer)
+    }
+    addContact(req,callback){
+        var self = this
+        for(var i = 0 ;i <this.hostList.length ; i++){
+            if(self.hostL[i].hostName === req.body.hostName)
+            {
+              if(selfhostL[i].contact === undefined)    
+              self.hostL[i].contact = [req.body]
+              else{
+                    self.hostL[i].contact.push(req.body)
+                    self.responseL[i].contact = self.hostList[i].contact
+                }
+            }
+            if(i === self.hostList.length-1)
+                self.fileOperater.saveData(hostList)
+        }
     }
 }
