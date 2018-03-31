@@ -1,9 +1,9 @@
-import Host from './module/Host'
-import FacebookObserver from './module/Observer/FacebookObserver';
-import LineObserver from './module/Observer/LineObserver';
-import EmailObserver from './module/Observer/EmailObserver';
-import SkypeObserver from './module/Observer/SkypeObserver';
-import TelephoneObserver from './module/Observer/TelephoneObserver';
+import Host from './Host'
+import FacebookObserver from './Observer/FacebookObserver';
+import LineObserver from './Observer/LineObserver';
+import EmailObserver from './Observer/EmailObserver';
+import SkypeObserver from './Observer/SkypeObserver';
+import TelephoneObserver from './Observer/TelephoneObserver';
 
 
 let hostManage
@@ -157,12 +157,11 @@ getContact(){
 }
 addContact(){
     app.post('/addContact',function(req,res){
-      console.log(req.body)
       hostManage.addContact(req,function(){
         for(let i =0 ; i < req.body.communicate.length ; i++){
           if(req.body.communicate[i].type === 'Facebook')
           {
-            let facebookObserver = new FacebookObserver()
+            const facebookObserver = new FacebookObserver()
             hostManage.attach(req.body.hostName,facebookObserver)
           }
           if(req.body.communicate[i].type === 'Telephone')
