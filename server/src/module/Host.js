@@ -1,5 +1,5 @@
 import FileOperater from './FileOperater'
-import Contact from './Contact'
+import ContactData from './ContactData'
 import HostData from './HostData'
 
 var ping = require('ping')
@@ -49,7 +49,7 @@ export default class Host{
                     var s = self
                     if(self.responseL[i].active !==  hostInfo.active)
                     {
-                        var contact = new Contact()
+                        var contact = new ContactData()
                         contact.emergencyContact(s.responseL[i].contact)
                     }
                     self.responseL[i].active =  hostInfo.active
@@ -106,23 +106,41 @@ export default class Host{
             callback()
           })
     }
-    attach(host,observer){
-        host.observerList.push(observer)
+    attach(hostName,observer){
+        var self = this
+        for(var i = 0 ;i <this.hostL.length ; i++){
+            if(self.hostL[i].hostName === hostName)
+            {
+              if(self.hostL[i].observerList === undefined)    
+                self.hostL[i].observerList = [observer]
+              else if(self.hostL[i].observerList.map(function(e) { return e.name}).indexOf(observer.name) === -1 ){
+                    self.hostL[i].observerList.push(observer)
+                    self.responseL[i].observerList = self.hostL[i].observerList
+                }
+                console.log(self.hostL[i].observerList)
+            }
+            if(i === self.hostL.length-1){
+                self.fileOperater.saveData(self.hostL)
+            }
+        }
     }
     addContact(req,callback){
         var self = this
-        for(var i = 0 ;i <this.hostList.length ; i++){
+        let contact  = new ContactData(req.body.contactName,req.body.communicate,req.body.hostName)
+        for(var i = 0 ;i <this.hostL.length ; i++){
             if(self.hostL[i].hostName === req.body.hostName)
             {
-              if(selfhostL[i].contact === undefined)    
-              self.hostL[i].contact = [req.body]
+              if(self.hostL[i].contact === undefined)    
+              self.hostL[i].contact = contact
               else{
-                    self.hostL[i].contact.push(req.body)
-                    self.responseL[i].contact = self.hostList[i].contact
+                    self.hostL[i].contact.push(contact)
+                    self.responseL[i].contact = self.hostL[i].contact
                 }
             }
-            if(i === self.hostList.length-1)
-                self.fileOperater.saveData(hostList)
+            if(i === self.hostL.length-1){
+                self.fileOperater.saveData(self.hostL)
+                callback()
+            }
         }
     }
 }

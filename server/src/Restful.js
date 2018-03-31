@@ -1,5 +1,10 @@
 import Host from './module/Host'
-import Contact from './module/Contact'
+import FacebookObserver from './module/Observer/FacebookObserver';
+import LineObserver from './module/Observer/LineObserver';
+import EmailObserver from './module/Observer/EmailObserver';
+import SkypeObserver from './module/Observer/SkypeObserver';
+import TelephoneObserver from './module/Observer/TelephoneObserver';
+
 
 let hostManage
 var express = require('express')
@@ -152,10 +157,39 @@ getContact(){
 }
 addContact(){
     app.post('/addContact',function(req,res){
-    let contact = new Contact
-    contact.addContact(req,hostManage,function(){
-      res.send('add success')
-    })
+      console.log(req.body)
+      hostManage.addContact(req,function(){
+        for(let i =0 ; i < req.body.communicate.length ; i++){
+          if(req.body.communicate[i].type === 'Facebook')
+          {
+            let facebookObserver = new FacebookObserver()
+            hostManage.attach(req.body.hostName,facebookObserver)
+          }
+          if(req.body.communicate[i].type === 'Telephone')
+          {
+            let telephoneObserver = new TelephoneObserver()
+            hostManage.attach(req.body.hostName,telephoneObserver)
+          }
+          if(req.body.communicate[i].type === 'Email')
+          {
+            let emailObserver = new EmailObserver()
+            hostManage.attach(req.body.hostName,emailObserver)
+          }
+          if(req.body.communicate[i].type === 'Skype')
+          {
+            let skypeObserver = new SkypeObserver()
+            hostManage.attach(req.body.hostName,skypeObserver)
+          }
+          if(req.body.communicate[i].type === 'LineID')
+          {
+            let lineObserver = new LineObserver()
+            hostManage.attach(req.body.hostName,lineObserver)
+          }
+          if(i=== req.body.communicate.length-1)
+            res.send('add success')
+        }
+        // hostManage.attach(req.body.hostName)
+      })
     }
   )
 }
