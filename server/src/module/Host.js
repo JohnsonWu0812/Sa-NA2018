@@ -2,6 +2,7 @@ import FileOperater from './FileOperater'
 import ContactData from './ContactData'
 import HostData from './HostData'
 import Timer from './Timer'
+import Observer from './Observer/Observer';
 
 var ping = require('ping')
 var moment = require('moment')
@@ -104,30 +105,25 @@ export default class Host{
             callback()
           })
     }
-    attach(hostName,observer){
+    attach(hostName,observer = new Observer){
         var self = this
         for(var i = 0 ;i <this.hostL.length ; i++){
             if(self.hostL[i].hostName === hostName)
             {
               if(self.hostL[i].observerList === undefined)    
-                self.hostL[i].observerList = [observer]
-              else if(self.hostL[i].observerList.map(function(e) { return e.name}).indexOf(observer.name) === -1 ){
+                    self.hostL[i].observerList = [observer]
+              else if(self.hostL[i].observerList.map(function(e) { return e.name}).indexOf(observer.name) === -1 )
                     self.hostL[i].observerList.push(observer)
-                    self.responseL[i].observerList = self.hostL[i].observerList
-                }
+              self.responseL[i].observerList = self.hostL[i].observerList
+              console.log(self.responseL[i].observerList[0])
             }
-            if(i === self.hostL.length-1){
+            if(i === self.hostL.length-1)
                 self.fileOperater.saveData(self.hostL)
-            }
         }
     }
     notifyAll(host){
         host.observerList.forEach((observer)=>{
-            // if(observer.name === 'facebookObserver')
-            // {
-
-            //     observer.notify()
-            // }
+            console.log(observer.name)
         })
     }
     addContact(req,callback){
